@@ -1,0 +1,64 @@
+
+
+.page.home {
+  .format-label {
+    label {
+      margin-top: -10px;
+    }
+  }
+  header {
+    .authbar {
+      display:flex;
+      flex-direction: row;
+
+      & > * {
+        border-right: black solid  1px;
+        padding: 0 5px;
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+  }
+  main {
+
+    .app-wrapper {
+      display: flex;
+      flex-direction: column;
+      & > * {
+        margin: 15px 0;
+      }
+      .form-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        align-items: center;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .view-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        & > * > * {
+          margin-bottom: 15px;
+        }
+        .image-link {
+          min-height: 1em;
+        }
+        .image-container {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .loaded-image {
+          }
+        }
+      }
+    }
+
+  }
+}
