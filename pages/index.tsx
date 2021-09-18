@@ -68,9 +68,6 @@ export class Home extends React.Component<HomeProps, HomeState> {
                 <h2>Enter a domain name to load the favicon</h2>
               </div>
               <div className={"form-row"}>
-                <FormControl style={{  minWidth: '60%' }}>
-                  <TextField id="href" label="Domain Name" placeholder={"reason.com"} variant="filled" value={this.state.tempHost} onChange={(e) => this.setState({ tempHost: e.currentTarget.value})} />
-                </FormControl>
                 <FormControl>
                   <InputLabel className={"format-label"} id="demo-simple-select-filled-label">Format</InputLabel>
                   <Select
@@ -88,6 +85,11 @@ export class Home extends React.Component<HomeProps, HomeState> {
                     }
                   </Select>
                 </FormControl>
+                <FormControl style={{  }}>
+                  <TextField id="href" label="Domain Name" placeholder={"reason.com"} variant="filled" value={this.state.tempHost} onChange={(e) => this.setState({ tempHost: e.currentTarget.value})} />
+                </FormControl>
+              </div>
+              <div className={"form-row"}>
                 <FormControl>
                   <Button onClick={() => {
                     this.setState({ loading: true, error: false, host: this.state.tempHost || null, format: this.state.tempFormat || DEFAULT_FORMAT })
