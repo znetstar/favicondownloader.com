@@ -7,7 +7,10 @@ RUN apt-get update -y && \
     apt-get install -y curl && \
     bash -c 'curl -fsSL https://deb.nodesource.com/setup_14.x | bash -' && \
     apt-get update -y && \
-    apt-get install -y nodejs libvips libvips-dev build-essential
+    apt-get install -y nodejs libvips libvips-dev build-essential libvips-tools apt-get install python3-gi gir1.2-vips-8.0 libtiff && \
+    wget https://raw.githubusercontent.com/jcupitt/libvips/8.4/python/packages/gi/overrides/Vips.py -O /usr/lib/python3/dist-packages/gi/overrides/Vips.py && \
+
+
 
 
 ADD ./package.json /app/package.json
