@@ -7,7 +7,7 @@ RUN apt-get update -y && \
     apt-get install -y curl && \
     bash -c 'curl -fsSL https://deb.nodesource.com/setup_14.x | bash -' && \
     apt-get update -y && \
-    apt-get install -y nodejs libvips libvips-dev build-essential libvips-tools apt-get install python3-gi gir1.2-vips-8.0
+    apt-get install -y nodejs libvips libvips-dev build-essential libvips-tools python3-gi gir1.2-vips-8.0
 
 
 
