@@ -78,9 +78,13 @@ type MetaEntry = {
 }
 
 export async function processMeta(id: string, buf: Buffer, inputMime?: string): Promise<MetaEntry|false> {
-  if (inputMime  && ['image/vnd.microsoft.icon', 'image/x-icon'].includes(inputMime)) {
-    buf = await icoToPng(buf, MAX_IMAGE_WIDTH);
-    inputMime = 'image/png';
+  try {
+    if (inputMime && ['image/vnd.microsoft.icon', 'image/x-icon'].includes(inputMime)) {
+      buf = await icoToPng(buf, MAX_IMAGE_WIDTH);
+      inputMime = 'image/png';
+    }
+  } catch (err) {
+    console.error((err as any).stack);
   }
 
   let metaEntry: MetaEntry|undefined = metaCache.get(id) as MetaEntry|undefined;
