@@ -11,12 +11,18 @@ You can change `reason.com` to any domain, and `format=png` to any of the format
 export enum ImageFormat {
   png  = 'png',
   jpeg = 'jpeg',
+  // Often has issues
   gif = 'gif',
+  webp = 'webp',
+  // Often has issues
   tiff  = 'tiff',
-  bmp = 'bmp'
+  avif = 'avif'
 }
 ```
 
 ## Install and Run
 
 Install with `npm install` and run with `npm start`.
+
+`getfavicon.io` depends on [`sharp`](https://sharp.pixelplumbing.com/) and `libvips`, if you have issues installing either see their respective pages.
+

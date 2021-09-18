@@ -24,7 +24,6 @@
     "@mui/icons-material": "^5.0.0",
     "@mui/material": "^5.0.0",
     "cheerio": "^1.0.0-rc.10",
-    "gm": "^1.23.1",
     "ico-to-png": "^0.2.1",
     "lodash": "^4.17.21",
     "lru_map": "^0.4.1",
@@ -33,14 +32,15 @@
     "next": "^11.1.2",
     "node-fetch": "^3.0.0",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "sharp": "^0.29.1"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.30",
-    "@types/gm": "^1.18.10",
     "@types/lodash": "^4.14.173",
     "@types/mime-types": "^2.1.1",
     "@types/react": "17.0.21",
+    "@types/sharp": "^0.29.2",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
     "node-polyfill-webpack-plugin": "^1.1.4",

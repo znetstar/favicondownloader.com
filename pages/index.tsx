@@ -1,23 +1,8 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import {
-  TextField,
-  Card,
-  CardContent,
-  Link,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-  Paper
-} from "@mui/material";
+import {Button, Card, CardContent, FormControl, InputLabel, Link, MenuItem, Select, TextField} from "@mui/material";
 import React from "react";
-import {ImageFormat, ImageFormatMimeTypes, MimeTypesImageFormat} from "../common/_imageFormats";
+import {ImageFormat, ImageFormatMimeTypes} from "../common/_imageFormats";
 import SearchIcon from '@mui/icons-material/Search';
 import QueryBuilderIcon from '@mui/icons-material/QueryBuilder';
-import CircularProgress from '@mui/material/CircularProgress';
 
 
 export interface HomeProps {
@@ -28,6 +13,8 @@ export interface HomeState {
   host: string|null;
   tempHost?: string;
   format: ImageFormat;
+
+  tempFormat?: ImageFormat;
   error?: boolean;
   loading?: boolean;
 }
@@ -41,11 +28,12 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-
+const  DEFAULT_FORMAT = ImageFormat.png;
 export class Home extends React.Component<HomeProps, HomeState> {
   public state = {
     host: null,
-    format: ImageFormat.png
+    format: DEFAULT_FORMAT,
+    tempFormat: DEFAULT_FORMAT
   } as HomeState
   constructor(props: HomeProps) {
     super(props);
@@ -85,12 +73,11 @@ export class Home extends React.Component<HomeProps, HomeState> {
               <FormControl>
                 <InputLabel className={"format-label"} id="demo-simple-select-filled-label">Format</InputLabel>
                 <Select
-                  labelId="demo-simple-select-filled-label"
-                  id="demo-simple-select-filled"
-                  value={this.state.format}
+                  value={this.state.tempFormat}
+                  variant="filled"
                   onChange={(e) => this.setState({
                     // @ts-ignore
-                    format: e.target.value as ImageFormat
+                    tempFormat: e.target.value as ImageFormat
                   })}
                 >
                   {
@@ -102,7 +89,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
               </FormControl>
               <FormControl>
                 <Button onClick={() => {
-                  this.setState({ loading: true, error: false, host: this.state.tempHost || null })
+                  this.setState({ loading: true, error: false, host: this.state.tempHost || null, format: this.state.tempFormat || DEFAULT_FORMAT })
                 }} variant="contained" disabled={this.state.loading} endIcon={this.state.loading ? <QueryBuilderIcon/> : <SearchIcon />}>
                   { this.state.loading ? 'Loading' : 'Load' }
                 </Button>

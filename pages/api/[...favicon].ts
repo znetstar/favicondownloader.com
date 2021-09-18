@@ -22,8 +22,10 @@ export default async function handler(
     res.end();
     return;
   }
-  const host = (req.url as string).split('/')[3];
+  let host = (req.url as string).split('/')[3];
 
+  if (host)
+    host = host.split('?').shift() as string;
 
   let mimeType = req.headers['accept'] ? mime.contentType((req.headers['accept']) as string) : void(0);
   if (mimeType === '*/*') mimeType = void(0);

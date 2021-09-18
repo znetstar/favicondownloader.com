@@ -16,7 +16,7 @@ RUN npm run build && npm install --production --ignore-scripts --prefer-offline
 FROM node:14 AS runner
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y graphicsmagick
+RUN apt-get update && apt-get install -y libvips libvips-dev
 
 ENV NODE_ENV production
 

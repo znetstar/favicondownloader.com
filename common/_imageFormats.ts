@@ -3,20 +3,18 @@ export enum ImageFormat {
   png  = 'png',
   jpeg = 'jpeg',
   gif = 'gif',
+  webp = 'webp',
   tiff  = 'tiff',
-  bmp = 'bmp'
+  avif = 'avif'
 }
 export const ImageFormatMimeTypes = new Map<ImageFormat, string>(
   [
-    [ ImageFormat.jpeg, 'image/jpeg' ],
     [ ImageFormat.png, 'image/png' ],
-    // [ ImageFormat.svg, 'image/svg+xml' ],
-    // [ ImageFormat.ico, 'image/x-icon' ],
+    [ ImageFormat.jpeg, 'image/jpeg' ],
     [ ImageFormat.gif, 'image/gif' ],
+    [ ImageFormat.webp, 'image/webp' ],
     [ ImageFormat.tiff, 'image/tiff' ],
-    [ ImageFormat.bmp, 'image/bmp' ],
-    // [ ImageFormat.heic, 'image/heic' ],
-    // [ ImageFormat.pdf, 'application/pdf' ],
+    [ ImageFormat.avif, 'image/avif' ]
   ]
 )
 export const MimeTypesImageFormat = new Map<string, ImageFormat>(
