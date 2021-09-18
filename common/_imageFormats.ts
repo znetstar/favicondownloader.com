@@ -8,7 +8,7 @@ export enum ImageFormat {
   /* Needs custom libvips */
   tiff  = 'tiff',
   /* Needs custom libvips */
-  heic = 'heic',
+  // heic = 'heic',
   avif = 'avif'
 }
 export const ImageFormatMimeTypes = new Map<ImageFormat, string>(
