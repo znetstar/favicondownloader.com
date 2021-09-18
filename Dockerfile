@@ -1,6 +1,7 @@
 FROM ubuntu:21.04
 
 ARG NODE_OPTIONS
+ARG CORES=1
 WORKDIR /app
 
 RUN apt-get update -y && \
@@ -31,7 +32,7 @@ RUN apt-get update -y && \
     git clone git://github.com/jcupitt/libvips.git && \
     cd libvips && \
     ./autogen.sh && \
-    make && \
+    make -j $CORES && \
     make install  && \
     cd /app &&  \
     rm -rf /tmp/libvips && \
