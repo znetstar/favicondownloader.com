@@ -7,7 +7,15 @@ RUN apt-get update -y && \
     apt-get install -y curl && \
     bash -c 'curl -fsSL https://deb.nodesource.com/setup_14.x | bash -' && \
     apt-get update -y && \
-    apt-get install -y imagemagick nodejs libvips-dev build-essential libvips-tools python3-gi gir1.2-vips-8.0 git && \
+    apt-get install -y imagemagick \
+    nodejs \
+    libvips-dev \
+    build-essential \
+    libvips-tools \
+    python3-gi \
+    gir1.2-vips-8.0 \
+    git  \
+    gtkdocize && \
     cd /tmp && \
     git clone git://github.com/jcupitt/libvips.git && \
     cd libvips && \
