@@ -7,7 +7,7 @@ RUN apt-get update -y && \
     apt-get install -y curl && \
     bash -c 'curl -fsSL https://deb.nodesource.com/setup_14.x | bash -' && \
     apt-get update -y && \
-    apt-get install -y nodejs libvips libvips-dev
+    apt-get install -y nodejs libvips libvips-dev build-essential
 
 ENV NODE_ENV production
 
