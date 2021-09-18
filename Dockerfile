@@ -15,6 +15,17 @@ RUN apt-get update -y && \
     python3-gi \
     gir1.2-vips-8.0 \
     git  \
+    gobject-introspection  \
+    libjpeg-dev  \
+    libpng-dev \
+    libexif-dev \
+    librsvg-dev \
+    libpoppler-glib-dev \
+    libpng-dev \
+    libwebp-dev \
+    libopenexr-dev \
+    libheif-dev \
+    libtiff-dev \
     gtk-doc-tools && \
     cd /tmp && \
     git clone git://github.com/jcupitt/libvips.git && \
