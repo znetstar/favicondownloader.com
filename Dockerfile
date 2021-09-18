@@ -19,7 +19,7 @@ RUN apt-get update -y && \
     libjpeg-dev  \
     libpng-dev \
     libexif-dev \
-    librsvg-dev \
+    librsvg2-dev \
     libpoppler-glib-dev \
     libpng-dev \
     libwebp-dev \
