@@ -3,7 +3,9 @@ FROM ubuntu:21.04
 ARG NODE_OPTIONS
 WORKDIR /app
 
-RUN bash -c 'curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -' && \
+RUN apt-get update -y && \
+    apt-get install -y curl && \
+    bash -c 'curl -fsSL https://deb.nodesource.com/setup_14.x | -E bash -' && \
     apt-get update -y && \
     apt-get install -y nodejs libvips libvips-dev
 
