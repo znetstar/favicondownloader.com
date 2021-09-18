@@ -7,15 +7,23 @@ RUN apt-get update -y && \
     apt-get install -y curl && \
     bash -c 'curl -fsSL https://deb.nodesource.com/setup_14.x | bash -' && \
     apt-get update -y && \
-    apt-get install -y nodejs libvips libvips-dev build-essential libvips-tools python3-gi gir1.2-vips-8.0
-
-
-
+    apt-get install -y imagemagick nodejs libvips-dev build-essential libvips-tools python3-gi gir1.2-vips-8.0 git && \
+    cd /tmp && \
+    git clone git://github.com/jcupitt/libvips.git && \
+    cd libvips && \
+    ./autogen.sh && \
+    make && \
+    make install  && \
+    cd /app &&  \
+    rm -rf /tmp/libvips && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    npm cache clean --force
 
 ADD ./package.json /app/package.json
 ADD ./package-lock.json /app/package-lock.json
 
-RUN npm ci --build-from-source
+RUN npm ci
 
 ENV NODE_ENV production
 
