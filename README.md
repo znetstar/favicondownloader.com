@@ -12,11 +12,13 @@ You can change `reason.com` to any domain, and `format=png` to any of the format
 export enum ImageFormat {
   png  = 'png',
   jpeg = 'jpeg',
-  // Often has issues
+  /* Needs custom libvips */
   gif = 'gif',
   webp = 'webp',
-  // Often has issues
+  /* Needs custom libvips */
   tiff  = 'tiff',
+  /* Needs custom libvips */
+  heic = 'heic',
   avif = 'avif'
 }
 ```

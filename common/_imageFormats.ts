@@ -2,9 +2,13 @@
 export enum ImageFormat {
   png  = 'png',
   jpeg = 'jpeg',
+  /* Needs custom libvips */
   gif = 'gif',
   webp = 'webp',
+  /* Needs custom libvips */
   tiff  = 'tiff',
+  /* Needs custom libvips */
+  heic = 'heic',
   avif = 'avif'
 }
 export const ImageFormatMimeTypes = new Map<ImageFormat, string>(
@@ -14,6 +18,7 @@ export const ImageFormatMimeTypes = new Map<ImageFormat, string>(
     [ ImageFormat.gif, 'image/gif' ],
     [ ImageFormat.webp, 'image/webp' ],
     [ ImageFormat.tiff, 'image/tiff' ],
+    [ ImageFormat.heic, 'image/heic'  ],
     [ ImageFormat.avif, 'image/avif' ]
   ]
 )
