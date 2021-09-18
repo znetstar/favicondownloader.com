@@ -332,7 +332,7 @@ export async function getFavicon(host: string, userAgent: string, mimeType: stri
     if (!favicon)
       return null;
 
-    const newImage = await ensureImageFormat(favicon.image, mimeType, '', favicon.mimeType);
+    const newImage = await ensureImageFormat(favicon.image, mimeType, id, favicon.mimeType);
 
     if (!newImage)
       return null;
