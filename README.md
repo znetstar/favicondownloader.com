@@ -2,6 +2,7 @@
 
 ## Usage
 
+
 For the web ui navigate to the homepage at [`https://getfavicon.io`](https://getfavicon.io).
 
 For the API: [`https://getfavicon.io/api/favicon/reason.com?format=png`](https://getfavicon.io/api/favicon/reason.com?format=png).
