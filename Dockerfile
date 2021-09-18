@@ -11,8 +11,14 @@ RUN apt-get update -y && \
 
 ENV NODE_ENV production
 
-RUN npm ci && \
-    npm run build
+ADD ./package.json /app/package.json
+ADD ./package-lock.json /app/package-lock.json
+
+RUN npm ci
+
+ADD . /app
+
+RUN npm run build
 
 EXPOSE 3000
 
