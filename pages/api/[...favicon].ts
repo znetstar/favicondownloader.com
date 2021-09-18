@@ -51,7 +51,8 @@ export default async function handler(
     res.setHeader('Expires', (fv.expireAt as Date).toUTCString());
     res.setHeader('Age', Math.round(((new Date()).getTime()-(fv.updatedAt as Date).getTime())/1e3));
     res.statusCode = 200;
-    res.end(fv.image);
+    res.write(fv.image);
+    res.end();
   } else {
     res.statusCode = 404;
     res.end();
