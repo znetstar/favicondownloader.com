@@ -1,12 +1,19 @@
 {
   "name": "getfavicon.io",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
+  },
+  "author": {
+    "email": "zachary@zacharyboyd.nyc",
+    "name": "Zachary R.T. Boyd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/znetstar/getfavicon.io"
   },
   "dependencies": {
     "@casl/mongoose": "^5.0.0",

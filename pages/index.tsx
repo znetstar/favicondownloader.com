@@ -83,7 +83,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
                 <TextField id="href" label="Domain Name" placeholder={"reason.com"} variant="filled" value={this.state.tempHost} onChange={(e) => this.setState({ tempHost: e.currentTarget.value})} />
               </FormControl>
               <FormControl>
-                <InputLabel classNam={"format-label"} id="demo-simple-select-filled-label">Format</InputLabel>
+                <InputLabel className={"format-label"} id="demo-simple-select-filled-label">Format</InputLabel>
                 <Select
                   labelId="demo-simple-select-filled-label"
                   id="demo-simple-select-filled"
