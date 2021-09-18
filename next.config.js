@@ -7,6 +7,9 @@ module.exports = {
       path.join(__dirname, 'styles')
     ]
   },
+  experimental: {
+    pageDataCollectionTimeout: 120
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
