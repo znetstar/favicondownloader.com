@@ -22,6 +22,7 @@
     "@fontsource/roboto": "^4.5.0",
     "@mui/icons-material": "^5.0.0",
     "@mui/material": "^5.0.0",
+    "async": "^3.2.1",
     "cheerio": "^1.0.0-rc.10",
     "ico-to-png": "^0.2.1",
     "lodash": "^4.17.21",

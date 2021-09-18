@@ -26,9 +26,6 @@ export const MAX_EXPIRE_IN = process.env.MAX_EXPIRE_IN ?  Number(process.env.MAX
 export const DEFAULT_MIME_TYPE = process.env.DEFAULT_MIME_TYPE ?  String(process.env.DEFAULT_MIME_TYPE) : 'image/png';
 export const MAX_IMAGE_WIDTH = process.env.MAX_IMAGE_WIDTH ? Number(process.env.MAX_IMAGE_WIDTH) : 228;
 
-
-
-
 export const FaviconSchema =  new Schema<IFavicon>({
   mimeType: {
     type: String,
@@ -73,13 +70,37 @@ export class HTTPError extends Error {
 
 type FaviconCandidate = { expireAt?: Date, image: Buffer, meta: Metadata }|null;
 
-export async function ensureImageFormat(buf: Buffer, mimeType: string, id: string,inputMime?: string): Promise<{image:Buffer, meta: Metadata}|null> {
+
+const metaCache = new LRUMap(1000);
+type MetaEntry = {
+  image: Buffer,
+  meta: Metadata
+}
+
+export async function processMeta(id: string, buf: Buffer, inputMime?: string): Promise<MetaEntry|false> {
+  if (inputMime  && ['image/vnd.microsoft.icon', 'image/x-icon'].includes(inputMime)) {
+    buf = await icoToPng(buf, MAX_IMAGE_WIDTH);
+    inputMime = 'image/png';
+  }
+
+  let metaEntry: MetaEntry|undefined = metaCache.get(id) as MetaEntry|undefined;
+  const newMeta = await sharp(buf).metadata();
+  if (metaEntry && ((metaEntry as MetaEntry).meta.width as number) > (newMeta.width as number)) {
+    return false;
+  } else {
+      metaEntry = {
+      image: buf,
+      meta: newMeta
+    };
+    metaCache.set(id, { meta: newMeta });
+
+    return metaEntry;
+  }
+}
+
+export async function ensureImageFormat(inBuf: Buffer, mimeType: string, id: string,inputMime?: string): Promise<Buffer|null> {
   try {
 
-    if (inputMime === 'image/x-icon') {
-      buf = await icoToPng(buf, MAX_IMAGE_WIDTH);
-      inputMime = 'image/png';
-    }
 
     const format = (MimeTypesImageFormat.get(mimeType) as ImageFormat).toString();
 
@@ -90,17 +111,17 @@ export async function ensureImageFormat(buf: Buffer, mimeType: string, id: strin
     else if (format === 'jpeg' || format === 'gif' || format  === 'tiff' || format === 'png')
       formatOpts = { quality: 100 };
 
-    const [  image, meta ]  = await Promise.all([
-      // @ts-ignore
-      sharp(buf)
-        // @ts-ignore
-        .resize({ width: MAX_IMAGE_WIDTH })
-        [format](formatOpts)
-        .toBuffer(),
-      sharp(buf).metadata()
-    ])
+    const metaEntry = await  processMeta(id, inBuf, inputMime);
 
-    return {image, meta};
+    if (!metaEntry) return null;
+    const { image: buf }  = metaEntry;
+
+    // @ts-ignore
+    return sharp(buf)
+      // @ts-ignore
+      .resize({ width: MAX_IMAGE_WIDTH })
+      [format](formatOpts)
+      .toBuffer()
   } catch (err) {
     throw err;
   }
@@ -133,13 +154,19 @@ export async function extractFaviconFromUrl(url: string, mimeType: string, id: s
         expireAt = httpExpires;
     }
 
-    const rawImage = Buffer.from(await imageResp.arrayBuffer());
-    const imageResult = await ensureImageFormat(rawImage, mimeType, id, imageResp.headers.get('content-type') || void(0));
-    if (!imageResult) return null;
+    let rawImage = Buffer.from(await imageResp.arrayBuffer());
+
+    const inputMime =  imageResp.headers.get('content-type') || void(0);
+
+    const metaEntry = await processMeta(id, rawImage, inputMime);
+
+    if (!metaEntry) return null;
+    const { image, meta } = metaEntry;
 
     return {
       expireAt,
-      ...imageResult
+      image,
+      meta
     }
   } catch (err)  {
     console.error((err as any).stack);
@@ -191,13 +218,15 @@ export async function extractFaviconFromPage(href: string, mimeType: string = DE
         })
 
         const results: FaviconCandidate[] = await Promise.all(lis.map((icon) => {
-          let linkUrl = $(icon).attr('href');
-          if (!linkUrl) return null;
-          if (linkUrl[0] === '/') {
-            linkUrl = url.protocol + '//' + url.host + linkUrl;
-          }
+          try {
+            let linkUrl = $(icon).attr('href');
+            if (!linkUrl) return null;
+            if (linkUrl[0] === '/') {
+              linkUrl = url.protocol + '//' + url.host + linkUrl;
+            }
 
-          return extractFaviconFromUrl(linkUrl, mimeType, id, userAgent);
+            return extractFaviconFromUrl(linkUrl, mimeType, id, userAgent);
+          } catch (err) { return null; }
         }));
 
         return results;
@@ -230,10 +259,11 @@ export async function extractFaviconFromPage(href: string, mimeType: string = DE
     })()
   ]);
 
-  if (candidates.length) {
-    for (const candidate of _.flatten(candidates).filter(Boolean).sort((a,b)=> {
-      return (b?.meta.width ||0) - (a?.meta.width ||0);
-    })) {
+  const cands = _.flatten(candidates).filter((i) => i && i.image).sort((a,b)=> {
+    return (b?.meta.width ||0) - (a?.meta.width ||0);
+  });
+  if (cands.length) {
+    for (const candidate of cands) {
       if (!candidate) continue;
 
       if (candidate.expireAt && (
@@ -257,7 +287,8 @@ export async function extractFaviconFromPage(href: string, mimeType: string = DE
 
 
 export async function getFavicon(host: string, userAgent: string, mimeType: string = DEFAULT_MIME_TYPE): Promise<Document<IFavicon>&IFavicon|null> {
-  const id = '1';
+  const parent = [ 'image/webp', 'image/png', 'image/avif' ].includes(mimeType);
+  const id = [  host ].join(':');
   let favicon: Document<IFavicon>&IFavicon|null = await Favicon.findOne( {
     host,
     mimeType,
@@ -275,8 +306,7 @@ export async function getFavicon(host: string, userAgent: string, mimeType: stri
 
 
   if (favicon) {
-    const newImageRes = await ensureImageFormat(favicon.image, mimeType, '', favicon.mimeType);
-    const newImage = newImageRes?.image as Buffer;
+    const newImage = await ensureImageFormat(favicon.image, mimeType, id, favicon.mimeType);
     const existingDoc: any = favicon.toObject();
     delete existingDoc._id;
 
@@ -300,9 +330,15 @@ export async function getFavicon(host: string, userAgent: string, mimeType: stri
     if (!favicon)
       return null;
 
+    const newImage = await ensureImageFormat(favicon.image, mimeType, '', favicon.mimeType);
+
+    if (!newImage)
+      return null;
+
     const newFavicon = await Favicon.create({
       ...favicon,
-      parent: [ 'image/webp', 'image/png' ].includes(mimeType)
+      image: newImage,
+      parent
     });
 
     return newFavicon;
