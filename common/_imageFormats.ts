@@ -17,8 +17,8 @@ export const ImageFormatMimeTypes = new Map<ImageFormat, string>(
     [ ImageFormat.jpeg, 'image/jpeg' ],
     [ ImageFormat.gif, 'image/gif' ],
     [ ImageFormat.webp, 'image/webp' ],
-    [ ImageFormat.tiff, 'image/tiff' ],
-    [ ImageFormat.heic, 'image/heic'  ],
+    // [ ImageFormat.tiff, 'image/tiff' ],
+    // [ ImageFormat.heic, 'image/heic'  ],
     [ ImageFormat.avif, 'image/avif' ]
   ]
 )

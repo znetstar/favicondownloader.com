@@ -5,7 +5,7 @@ ARG CORES=1
 WORKDIR /app
 
 RUN apt-get update -y && \
-    apt-get install -y curl && \
+    apt-get install -y curl &&  \
     bash -c 'curl -fsSL https://deb.nodesource.com/setup_14.x | bash -' && \
     apt-get update -y && \
     apt-get install -y imagemagick \
