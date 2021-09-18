@@ -29,3 +29,6 @@ Install with `npm install` and run with `npm start`.
 
 `getfavicon.io` depends on [`sharp`](https://sharp.pixelplumbing.com/) and `libvips`, if you have issues installing either see their respective pages.
 
+## Docker
+
+The docker image created by the `Dockerfile` compiles `libvips` with all the prerequisite.
