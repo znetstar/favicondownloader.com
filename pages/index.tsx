@@ -11,7 +11,7 @@ export interface HomeProps {
 
 export interface HomeState {
   host: string|null;
-  tempHost?: string;
+  tempHost?: string|null;
   format: ImageFormat;
 
   tempFormat?: ImageFormat;
@@ -32,6 +32,7 @@ const  DEFAULT_FORMAT = ImageFormat.png;
 export class Home extends React.Component<HomeProps, HomeState> {
   public state = {
     host: null,
+    tempHost: null,
     format: DEFAULT_FORMAT,
     tempFormat: DEFAULT_FORMAT
   } as HomeState
@@ -45,7 +46,14 @@ export class Home extends React.Component<HomeProps, HomeState> {
     return base+'/api/favicon/'+this.state.host+'?format='+this.state.format;
   }
 
-  doSearch = () =>  this.setState({ loading: true, error: false, host: this.state.tempHost || null, format: this.state.tempFormat || DEFAULT_FORMAT });
+  get canSearch() {
+    return this.state.tempHost !== this.state.host || this.state.tempFormat !== this.state.format;
+  }
+
+  doSearch = () =>  {
+    if (this.canSearch)
+      this.setState({ loading: true, error: false, host: this.state.tempHost || null, format: this.state.tempFormat || DEFAULT_FORMAT });
+  }
 
   render() {
     return (
@@ -109,7 +117,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
                 <FormControl>
                   <Button onClick={() => {
                     this.doSearch();
-                  }} variant="contained" disabled={this.state.loading} endIcon={this.state.loading ? <QueryBuilderIcon/> : <SearchIcon />}>
+                  }} variant="contained" disabled={this.state.loading || !this.canSearch} endIcon={this.state.loading ? <QueryBuilderIcon/> : <SearchIcon />}>
                     { this.state.loading ? 'Loading' : 'Load' }
                   </Button>
                 </FormControl>
@@ -124,7 +132,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
                             {
                               !this.state.error ? (
                                 this.imageLink ?
-                                  <img alt={""} onLoad={() => this.setState({ loading: false })} onError={() => this.setState({loading: false, error: true })} className={"loaded-image"} src={this.imageLink as string}>
+                                  <img alt={""} onAbort={() => this.setState({ loading: true })} onChange={() => this.setState({ loading: true })} onLoad={() => this.setState({ loading: false })} onError={() => this.setState({loading: false, error: true })} className={"loaded-image"} src={this.imageLink as string}>
                                   </img> : null
                               ) : (
                                 <p>Couldn&apos;t load favicon</p>
