@@ -1,0 +1,43 @@
+{
+  "name": "getfavicon.io",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@casl/mongoose": "^5.0.0",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@fontsource/poppins": "^4.5.0",
+    "@fontsource/roboto": "^4.5.0",
+    "@mui/icons-material": "^5.0.0",
+    "@mui/material": "^5.0.0",
+    "cheerio": "^1.0.0-rc.10",
+    "gm": "^1.23.1",
+    "ico-to-png": "^0.2.1",
+    "lodash": "^4.17.21",
+    "lru_map": "^0.4.1",
+    "mime-types": "^2.1.32",
+    "mongoose": "^5.13.9",
+    "next": "^11.1.2",
+    "node-fetch": "^3.0.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.30",
+    "@types/gm": "^1.18.10",
+    "@types/lodash": "^4.14.173",
+    "@types/mime-types": "^2.1.1",
+    "@types/react": "17.0.21",
+    "eslint": "7.32.0",
+    "eslint-config-next": "11.1.2",
+    "node-polyfill-webpack-plugin": "^1.1.4",
+    "sass": "^1.41.1",
+    "typescript": "4.4.3"
+  }
+}

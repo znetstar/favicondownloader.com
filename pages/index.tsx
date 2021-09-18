@@ -1,0 +1,148 @@
+import type { NextPage } from 'next'
+import Head from 'next/head'
+import Image from 'next/image'
+import {
+  TextField,
+  Card,
+  CardContent,
+  Link,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+  Paper
+} from "@mui/material";
+import React from "react";
+import {ImageFormat, ImageFormatMimeTypes, MimeTypesImageFormat} from "../common/_imageFormats";
+import SearchIcon from '@mui/icons-material/Search';
+import QueryBuilderIcon from '@mui/icons-material/QueryBuilder';
+import CircularProgress from '@mui/material/CircularProgress';
+
+
+export interface HomeProps {
+  siteUri?: string;
+}
+
+export interface HomeState {
+  host: string|null;
+  tempHost?: string;
+  format: ImageFormat;
+  error?: boolean;
+  loading?: boolean;
+}
+
+export async function getServerSideProps(context: any) {
+  const { res } = context;
+  return {
+    props: {
+      siteUri: process.env.SITE_URI
+    }
+  }
+}
+
+
+export class Home extends React.Component<HomeProps, HomeState> {
+  public state = {
+    host: null,
+    format: ImageFormat.png
+  } as HomeState
+  constructor(props: HomeProps) {
+    super(props);
+  }
+
+  get imageLink(): string|null  {
+    if  (!this.state.host) return null;
+    let base = this.props.siteUri || (document.location.protocol + '//' + document.location.host);
+    return base+'/api/favicon/'+this.state.host+'?format='+this.state.format;
+  }
+
+  render() {
+    return (
+      <div className={"page home"}>
+        <header>
+          <div>
+            <h1>Favicon Downloader</h1>
+          </div>
+          <div className={"authbar"}>
+            <div>
+              Source is on <Link target="_blank" href={"https://zb.gy/gh/getfavicon.io"}>GitHub</Link>
+            </div>
+            <div>
+              <div>Witten by <Link target="_blank" href={"https://zb.gy"}>Zachary R.T. Boyd</Link></div>
+            </div>
+          </div>
+        </header>
+        <main>
+          <div className={"app-wrapper"}>
+            <div>
+              <h2>Enter a domain name to load the favicon</h2>
+            </div>
+            <div className={"form-row"}>
+              <FormControl style={{  minWidth: '60%' }}>
+                <TextField id="href" label="Domain Name" placeholder={"reason.com"} variant="filled" value={this.state.tempHost} onChange={(e) => this.setState({ tempHost: e.currentTarget.value})} />
+              </FormControl>
+              <FormControl>
+                <InputLabel classNam={"format-label"} id="demo-simple-select-filled-label">Format</InputLabel>
+                <Select
+                  labelId="demo-simple-select-filled-label"
+                  id="demo-simple-select-filled"
+                  value={this.state.format}
+                  onChange={(e) => this.setState({
+                    // @ts-ignore
+                    format: e.target.value as ImageFormat
+                  })}
+                >
+                  {
+                    Array.from(ImageFormatMimeTypes.entries()).map(([  format, mimeType ]) => (
+                      <MenuItem key={format.toString().toUpperCase()} value={format}>{format.toString().toUpperCase()}</MenuItem>
+                    ))
+                  }
+                </Select>
+              </FormControl>
+              <FormControl>
+                <Button onClick={() => {
+                  this.setState({ loading: true, error: false, host: this.state.tempHost || null })
+                }} variant="contained" disabled={this.state.loading} endIcon={this.state.loading ? <QueryBuilderIcon/> : <SearchIcon />}>
+                  { this.state.loading ? 'Loading' : 'Load' }
+                </Button>
+              </FormControl>
+            </div>
+            {
+              this.imageLink ? (
+                <div className={'view-row'}>
+                  <div>
+                    <Card sx={{ minWidth: 300 }}>
+                      <CardContent>
+                        <div className={"image-container"}>
+                          {
+                            !this.state.error ? (
+                              this.imageLink ?
+                                <img alt={""} onLoad={() => this.setState({ loading: false })} onError={() => this.setState({loading: false, error: true })} className={"loaded-image"} src={this.imageLink as string}>
+                                </img> : null
+                            ) : (
+                              <p>Couldn&apos;t load favicon</p>
+                            )
+                          }
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <p>
+                      You can also call the API directly from your code <br/>
+                      <Link  className={"image-link"}  target="_blank" href={this.imageLink as string}>{this.imageLink}</Link>
+                    </p>
+                  </div>
+                </div>
+              ) : null
+            }
+          </div>
+        </main>
+        <footer>
+
+        </footer>
+      </div>
+    );
+  }
+}
+
+export default Home
