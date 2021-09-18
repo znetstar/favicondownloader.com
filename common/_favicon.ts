@@ -291,6 +291,7 @@ export async function extractFaviconFromPage(href: string, mimeType: string = DE
 
 
 export async function getFavicon(host: string, userAgent: string, mimeType: string = DEFAULT_MIME_TYPE): Promise<Document<IFavicon>&IFavicon|null> {
+  host = host.toLowerCase();
   const parent = [ 'image/webp', 'image/png', 'image/avif' ].includes(mimeType);
   const id = [  host ].join(':');
   let favicon: Document<IFavicon>&IFavicon|null = await Favicon.findOne( {
@@ -326,10 +327,7 @@ export async function getFavicon(host: string, userAgent: string, mimeType: stri
     return newFavicon;
   }
   else {
-    const favicon = await Promise.race<IFavicon|null>([
-      extractFaviconFromPage(`https://${host}`, mimeType, id, userAgent),
-      extractFaviconFromPage(`http://${host}`, mimeType, id, userAgent)
-    ])
+    let favicon = await extractFaviconFromPage(`https://${host}`, mimeType, id, userAgent) || await extractFaviconFromPage(`http://${host}`, mimeType, id, userAgent) || null;
 
     if (!favicon)
       return null;

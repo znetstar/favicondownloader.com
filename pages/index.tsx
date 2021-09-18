@@ -45,6 +45,8 @@ export class Home extends React.Component<HomeProps, HomeState> {
     return base+'/api/favicon/'+this.state.host+'?format='+this.state.format;
   }
 
+  doSearch = () =>  this.setState({ loading: true, error: false, host: this.state.tempHost || null, format: this.state.tempFormat || DEFAULT_FORMAT });
+
   render() {
     return (
       <React.Fragment>
@@ -86,13 +88,27 @@ export class Home extends React.Component<HomeProps, HomeState> {
                   </Select>
                 </FormControl>
                 <FormControl style={{  }}>
-                  <TextField id="href" label="Domain Name" placeholder={"reason.com"} variant="filled" value={this.state.tempHost} onChange={(e) => this.setState({ tempHost: e.currentTarget.value})} />
+                  <TextField id="href" label="Domain Name" onKeyDown={(e)=>{
+                    if (e.key === 'Enter') {
+                      this.doSearch();
+                    }
+                  }} placeholder={"reason.com"} variant="filled" value={this.state.tempHost} onChange={(e) => {
+                    let u = (e.currentTarget.value as string).toLowerCase();
+                    if (u.indexOf('//') !== -1) {
+                      u = u.split('/')[2] as string;
+                    }
+                    else if (u.indexOf('/') !== -1) {
+                      u = u.split('/')[0] as string;
+                    }
+
+                    this.setState({ tempHost: u })
+                  }} />
                 </FormControl>
               </div>
               <div className={"form-row"}>
                 <FormControl>
                   <Button onClick={() => {
-                    this.setState({ loading: true, error: false, host: this.state.tempHost || null, format: this.state.tempFormat || DEFAULT_FORMAT })
+                    this.doSearch();
                   }} variant="contained" disabled={this.state.loading} endIcon={this.state.loading ? <QueryBuilderIcon/> : <SearchIcon />}>
                     { this.state.loading ? 'Loading' : 'Load' }
                   </Button>
