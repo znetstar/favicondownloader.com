@@ -9,12 +9,13 @@ RUN apt-get update -y && \
     apt-get update -y && \
     apt-get install -y nodejs libvips libvips-dev build-essential
 
-ENV NODE_ENV production
 
 ADD ./package.json /app/package.json
 ADD ./package-lock.json /app/package-lock.json
 
 RUN npm ci
+
+ENV NODE_ENV production
 
 ADD . /app
 
