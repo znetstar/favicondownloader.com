@@ -15,7 +15,7 @@ RUN apt-get update -y && \
     python3-gi \
     gir1.2-vips-8.0 \
     git  \
-    gtkdocize && \
+    gtk-doc-tools && \
     cd /tmp && \
     git clone git://github.com/jcupitt/libvips.git && \
     cd libvips && \
