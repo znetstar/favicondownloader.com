@@ -1,5 +1,5 @@
 {
-  "name": "getfavicon.io",
+  "name": "favicondownloader.com",
   "version": "0.1.1",
   "scripts": {
     "dev": "next dev",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/znetstar/getfavicon.io"
+    "url": "https://github.com/znetstar/favicondownloader.com"
   },
   "dependencies": {
     "@emotion/react": "^11.4.1",

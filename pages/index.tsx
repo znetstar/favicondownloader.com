@@ -65,7 +65,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
             </div>
             <div className={"authbar"}>
               <div>
-                Source is on <Link target="_blank" href={"https://zb.gy/gh/getfavicon.io"}>GitHub</Link>
+                Source is on <Link target="_blank" href={"https://zb.gy/gh/favicondownloader.com"}>GitHub</Link>
               </div>
               <div>
                 <div>Witten by <Link target="_blank" href={"https://zb.gy"}>Zachary R.T. Boyd</Link></div>

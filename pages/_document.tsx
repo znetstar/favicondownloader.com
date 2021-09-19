@@ -11,6 +11,7 @@ class MyDocument extends Document {
       <Html>
         <Head>
           {/* Global Site Tag (gtag.js) - Google Analytics */}
+          <title>Favicon Downloader</title>
           { process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS ? (
             <React.Fragment>
               <script
@@ -20,12 +21,14 @@ class MyDocument extends Document {
               <script
                 dangerouslySetInnerHTML={{
                   __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
-                  page_path: window.location.pathname,
-                });
+                  if (!localStorage.noGA)
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
+                      page_path: window.location.pathname,
+                    });
+                 }
               `,
                 }} ></script>
             </React.Fragment>

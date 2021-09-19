@@ -1,11 +1,11 @@
-[getfavicon.io](https://getfavicon.io) is a minimalistic next.js favicon downloader.
+[favicondownloader.com](https://favicondownloader.com) is a minimalistic next.js favicon downloader.
 
 ## Usage
 
 
-For the web ui navigate to the homepage at [`https://getfavicon.io`](https://getfavicon.io).
+For the web ui navigate to the homepage at [`https://favicondownloader.com`](https://favicondownloader.com).
 
-For the API: [`https://getfavicon.io/api/favicon/reason.com?format=png`](https://getfavicon.io/api/favicon/reason.com?format=png).
+For the API: [`https://favicondownloader.com/api/favicon/reason.com?format=png`](https://favicondownloader.com/api/favicon/reason.com?format=png).
 
 You can change `reason.com` to any domain, and `format=png` to any of the formats below
 ```typescript
@@ -27,7 +27,7 @@ export enum ImageFormat {
 
 Install with `npm install` and run with `npm start`.
 
-`getfavicon.io` depends on [`sharp`](https://sharp.pixelplumbing.com/) and `libvips`, if you have issues installing either see their respective pages.
+`favicondownloader.com` depends on [`sharp`](https://sharp.pixelplumbing.com/) and `libvips`, if you have issues installing either see their respective pages.
 
 ## Docker
 
