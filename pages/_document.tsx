@@ -21,7 +21,7 @@ class MyDocument extends Document {
               <script
                 dangerouslySetInnerHTML={{
                   __html: `
-                  if (!localStorage.noGA)
+                  if (!localStorage.noGA) {
                     window.dataLayer = window.dataLayer || [];
                     function gtag(){dataLayer.push(arguments);}
                     gtag('js', new Date());
