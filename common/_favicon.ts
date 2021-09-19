@@ -7,10 +7,12 @@ import * as _ from 'lodash';
 
 import {LRUMap} from 'lru_map';
 import sharp, {Metadata} from 'sharp';
-import {ImageFormat, ImageFormatMimeTypes, MimeTypesImageFormat} from "./_imageFormats";
+import {ImageFormat, ImageFormatMimeType, ImageFormatMimeTypes, MimeTypesImageFormat} from "./_imageFormats";
+
 const icoToPng = require('ico-to-png');
+const pngToIco = require('to-ico');
 export interface IFavicon  {
-  mimeType: string;
+  mimeType: ImageFormatMimeType;
   host: string;
   image: Buffer;
   expireAt?: Date;
@@ -23,7 +25,7 @@ export interface IFavicon  {
 
 export const DEFAULT_EXPIRE_IN = process.env.DEFAULT_EXPIRE_IN ?  Number(process.env.DEFAULT_EXPIRE_IN) : 86400e3;
 export const MAX_EXPIRE_IN = process.env.MAX_EXPIRE_IN ?  Number(process.env.MAX_EXPIRE_IN) : 86400e3*30;
-export const DEFAULT_MIME_TYPE = process.env.DEFAULT_MIME_TYPE ?  String(process.env.DEFAULT_MIME_TYPE) : 'image/png';
+export const DEFAULT_MIME_TYPE: ImageFormatMimeType = process.env.DEFAULT_MIME_TYPE ?  String(process.env.DEFAULT_MIME_TYPE) as ImageFormatMimeType  : 'image/png' as ImageFormatMimeType;
 export const MAX_IMAGE_WIDTH = process.env.MAX_IMAGE_WIDTH ? Number(process.env.MAX_IMAGE_WIDTH) : 228;
 
 export const FaviconSchema =  new Schema<IFavicon>({
@@ -77,9 +79,27 @@ type MetaEntry = {
   meta: Metadata
 }
 
-export async function processMeta(id: string, buf: Buffer, inputMime?: string): Promise<MetaEntry|false> {
+
+export function getMimeTypeFromFormat(format: ImageFormat) {
+  return ImageFormatMimeTypes.get(format);
+}
+
+export function isIco(mimeType: ImageFormatMimeType) {
+  return ['image/vnd.microsoft.icon', getMimeTypeFromFormat(ImageFormat.ico)].includes(mimeType);
+}
+
+export function isLossless (mimeType: ImageFormatMimeType) {
+
+  return [
+    getMimeTypeFromFormat(ImageFormat.png),
+    getMimeTypeFromFormat(ImageFormat.webp),
+    getMimeTypeFromFormat(ImageFormat.avif)
+  ].includes(mimeType);
+}
+
+export async function processMeta(id: string, buf: Buffer, inputMime?: ImageFormatMimeType): Promise<MetaEntry|false> {
   try {
-    if (inputMime && ['image/vnd.microsoft.icon', 'image/x-icon'].includes(inputMime)) {
+    if (inputMime && isIco(inputMime)) {
       buf = await icoToPng(buf, MAX_IMAGE_WIDTH);
       inputMime = 'image/png';
     }
@@ -102,15 +122,13 @@ export async function processMeta(id: string, buf: Buffer, inputMime?: string): 
   }
 }
 
-export async function ensureImageFormat(inBuf: Buffer, mimeType: string, id: string,inputMime?: string): Promise<Buffer|null> {
+export async function ensureImageFormat(inBuf: Buffer, mimeType: ImageFormatMimeType, id: string,inputMime?: ImageFormatMimeType, width: number = MAX_IMAGE_WIDTH): Promise<Buffer|null> {
   try {
-
-
     const format = (MimeTypesImageFormat.get(mimeType) as ImageFormat).toString();
 
     let formatOpts: any;
 
-    if (format === 'webp' || format === 'lossless')
+    if (format === 'webp' || format === 'avif')
       formatOpts = { lossless: true };
     else if (format === 'jpeg' || format === 'gif' || format  === 'tiff' || format === 'png')
       formatOpts = { quality: 100 };
@@ -120,18 +138,34 @@ export async function ensureImageFormat(inBuf: Buffer, mimeType: string, id: str
     if (!metaEntry) return null;
     const { image: buf }  = metaEntry;
 
-    // @ts-ignore
-    return sharp(buf)
+    let outBuf: Buffer;
+
+    if (mimeType === inputMime && metaEntry.meta?.width && metaEntry.meta.width < width) {
+      outBuf = buf;
+    } else {
       // @ts-ignore
-      .resize({ width: MAX_IMAGE_WIDTH })
-      [format](formatOpts)
-      .toBuffer()
+      outBuf = await sharp(buf)
+        // @ts-ignore
+        .resize({width})
+        [
+        format === 'ico' ? 'png' : format
+        ](formatOpts)
+        .toBuffer();
+
+      if (format === 'ico') {
+        outBuf = await pngToIco([ outBuf ], {
+          resize: true
+        });
+      }
+    }
+
+    return outBuf;
   } catch (err) {
     throw err;
   }
 }
 
-export async function extractFaviconFromUrl(url: string, mimeType: string, id: string, userAgent: string): Promise<FaviconCandidate>  {
+export async function extractFaviconFromUrl(url: string, mimeType: ImageFormatMimeType, id: string, userAgent: string): Promise<FaviconCandidate>  {
   try {
     const imageResp = await fetch(url, {
       headers: {
@@ -160,7 +194,9 @@ export async function extractFaviconFromUrl(url: string, mimeType: string, id: s
 
     let rawImage = Buffer.from(await imageResp.arrayBuffer());
 
-    const inputMime =  imageResp.headers.get('content-type') || void(0);
+    const inputMime = (
+      imageResp.headers.get('content-type') === 'type="image/x-icon' ? 'image/x-icon' :  imageResp.headers.get('content-type')
+    ) as ImageFormatMimeType || void(0);
 
     const metaEntry = await processMeta(id, rawImage, inputMime);
 
@@ -178,7 +214,7 @@ export async function extractFaviconFromUrl(url: string, mimeType: string, id: s
   }
 }
 
-export async function extractFaviconFromPage(href: string, mimeType: string = DEFAULT_MIME_TYPE, id: string, userAgent: string): Promise<IFavicon|null> {
+export async function extractFaviconFromPage(href: string, mimeType: ImageFormatMimeType = DEFAULT_MIME_TYPE, id: string, userAgent: string): Promise<IFavicon|null> {
   let pageText: string;
   let destUrl: string;
   let url: URL;
@@ -290,9 +326,9 @@ export async function extractFaviconFromPage(href: string, mimeType: string = DE
 
 
 
-export async function getFavicon(host: string, userAgent: string, mimeType: string = DEFAULT_MIME_TYPE): Promise<Document<IFavicon>&IFavicon|null> {
+export async function getFavicon(host: string, userAgent: string, mimeType: ImageFormatMimeType = DEFAULT_MIME_TYPE): Promise<Document<IFavicon>&IFavicon|null> {
   host = host.toLowerCase();
-  const parent = [ 'image/webp', 'image/png', 'image/avif' ].includes(mimeType);
+  const parent = isLossless(mimeType);
   const id = [  host ].join(':');
   let favicon: Document<IFavicon>&IFavicon|null = await Favicon.findOne( {
     host,

@@ -28,7 +28,7 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-const  DEFAULT_FORMAT = ImageFormat.png;
+const  DEFAULT_FORMAT = ImageFormat.ico;
 export class Home extends React.Component<HomeProps, HomeState> {
   public state = {
     host: null,
@@ -75,7 +75,7 @@ export class Home extends React.Component<HomeProps, HomeState> {
           <main>
             <div className={"app-wrapper"}>
               <div>
-                <h2>Enter a domain name to load the favicon</h2>
+                <h2>Enter a domain name to download its favicon in any format</h2>
               </div>
               <div className={"form-row"}>
                 <FormControl>

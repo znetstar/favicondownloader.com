@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import * as mime  from 'mime-types';
 import { IFavicon } from '../../common/_favicon';
-import {ImageFormat, ImageFormatMimeTypes} from "../../common/_imageFormats";
+import {ImageFormat, ImageFormatMimeType, ImageFormatMimeTypes} from "../../common/_imageFormats";
 
 type Data = {
   name: string
@@ -27,7 +27,11 @@ export default async function handler(
   if (host)
     host = host.split('?').shift() as string;
 
-  let mimeType = req.headers['accept'] ? mime.contentType((req.headers['accept']) as string) : void(0);
+  const accept = (
+    req.headers['accept'] === 'type="image/x-icon' ? 'image/x-icon' : req.headers['accept']
+  ) as ImageFormatMimeType|undefined || void(0);
+
+  let mimeType = accept  ? mime.contentType(accept) : void(0);
   if (mimeType === '*/*') mimeType = void(0);
   if (mimeType)
     mimeType = mimeType.split(';').shift();
@@ -36,14 +40,14 @@ export default async function handler(
     mimeType = ImageFormatMimeTypes.get(req.query.format as ImageFormat) as string;
   }
 
-  if (mimeType && !Array.from(ImageFormatMimeTypes.values()).includes(mimeType)) {
+  if (mimeType && !Array.from(ImageFormatMimeTypes.values()).includes(mimeType as ImageFormatMimeType)) {
     // res.statusCode = 406;
     // res.end();
     mimeType = void(0);
     // return;
   }
 
-  const favicon = await getFavicon(host, DEFAULT_USER_AGENT, mimeType as string);
+  const favicon = await getFavicon(host, DEFAULT_USER_AGENT, mimeType as ImageFormatMimeType);
   if (favicon) {
     const fv: IFavicon = favicon as unknown as IFavicon;
     res.setHeader('Content-Type', fv.mimeType as string);
