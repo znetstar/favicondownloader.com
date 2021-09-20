@@ -12,8 +12,8 @@
       flex-direction: row;
 
       & > * {
-        border-right: black solid  1px;
         padding: 0 5px;
+        border-right: solid black 1px;
         &:last-child {
           border-right: none;
         }

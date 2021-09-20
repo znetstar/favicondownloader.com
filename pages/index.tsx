@@ -65,10 +65,10 @@ export class Home extends React.Component<HomeProps, HomeState> {
             </div>
             <div className={"authbar"}>
               <div>
-                Source is on <Link target="_blank" href={"https://zb.gy/gh/favicondownloader.com"}>GitHub</Link>
+                <div>By <Link target="_blank" href={"https://zb.gy"}>Zachary R.T. Boyd</Link></div>
               </div>
               <div>
-                <div>Witten by <Link target="_blank" href={"https://zb.gy"}>Zachary R.T. Boyd</Link></div>
+                Source is on <Link target="_blank" href={"https://zb.gy/gh/favicondownloader.com"}>GitHub</Link>
               </div>
             </div>
           </header>
@@ -142,8 +142,8 @@ export class Home extends React.Component<HomeProps, HomeState> {
                         </CardContent>
                       </Card>
                       <p>
-                        You can also call the API directly from your code <br/>
-                        <Link  className={"image-link"}  target="_blank" href={this.imageLink as string}>{this.imageLink}</Link>
+                        <div>You can also call the API directly from your code</div>
+                        <div><Link className={"image-link"}  target="_blank" href={this.imageLink as string}>{this.imageLink}</Link></div>
                       </p>
                     </div>
                   </div>
